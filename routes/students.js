@@ -5,14 +5,14 @@ var db=require("../db")
 
 //Get all students
 router.route("/")
-    .get(function(req,res){
-        db.Student.find({})
-        .then((students)=>{
+    .get(async(req,res)=>{
+        try {
+            var students= await db.Student.find({})
             res.status(200).send(students)
-        })
-        .catch((err)=>{
+        }
+        catch(err){
             res.status(500).send(err)
-        })
+        }
     })
     .post((req,res)=>{
         var newStudent=new db.Student(req.body)
