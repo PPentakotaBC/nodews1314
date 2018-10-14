@@ -1,57 +1,46 @@
 var express=require("express");
 var router=express.Router();
+var db=require("../db")
 
-var students=[
-    {
-        id:1,
-        name:"Varma"
-    },
-    {
-        id:2,
-        name:"Suma"
-    },
-    {
-        id:3,
-        name:"Neelima"
-    }
-]
 
 //Get all students
 router.route("/")
     .get(function(req,res){
-        res.send(students)
+        db.Student.find({},function(err,students){
+            if(err) res.status(500).send(err);
+            res.status(200).send(students);
+        })
     })
-    .post(function(req,res){
-        students.push(req.body)
-        res.send(students)
+    .post((req,res)=>{
+        var newStudent=new db.Student(req.body)
+        newStudent.save((err,student)=>{
+            if(err) res.status(500).send(err);
+            res.send(student)
+        })
     })
 
 //Get single student
 router.route("/:id")
     .get(function(req,res,next){
-
         var id=req.params.id;
-
-        var newStudent=students.filter((student)=>{
-            return student.id==id;
+        db.Student.findById(id,(err,student)=>{
+            if(err) res.status(500).send(err);
+            res.send(student);
         })
-
-        res.send(newStudent[0])
     })
     .delete(function(req,res){
         var id=req.params.id;
-        var newStudents=students.filter((student)=>{
-            return student.id != id
+        db.Student.findByIdAndRemove(id,(err,student)=>{
+            if(err) res.status(500).send(err);
+            res.send(student);
         })
-        res.send(newStudents)
     })
     .put(function(req,res){
         var id=req.params.id;
-        var newStudent=students.filter((student)=>{
-            return student.id == id
+        db.Student.findByIdAndUpdate(id,req.body,(err,student)=>{
+            if(err) res.status(500).send(err);
+            res.send(student);
         })
-        newStudent[0].name="Something else"
-        res.send(newStudent[0])
     })
 
 module.exports=router
