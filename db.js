@@ -1,6 +1,9 @@
 var mongoose=require("mongoose")
 mongoose.connect("mongodb://localhost:27017/nodeworkshop");
 
+mongoose.Promise=global.Promise;
+
+
 var studentSchema=mongoose.Schema({
     name:{
         type:String,
