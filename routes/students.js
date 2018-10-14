@@ -6,16 +6,22 @@ var db=require("../db")
 //Get all students
 router.route("/")
     .get(function(req,res){
-        db.Student.find({},function(err,students){
-            if(err) res.status(500).send(err);
-            res.status(200).send(students);
+        db.Student.find({})
+        .then((students)=>{
+            res.status(200).send(students)
+        })
+        .catch((err)=>{
+            res.status(500).send(err)
         })
     })
     .post((req,res)=>{
         var newStudent=new db.Student(req.body)
-        newStudent.save((err,student)=>{
-            if(err) res.status(500).send(err);
-            res.send(student)
+        newStudent.save()
+        .then((student)=>{
+            res.status(200).send(student)
+        })
+        .catch((err)=>{
+            res.status(500).send(err);
         })
     })
 
@@ -37,7 +43,7 @@ router.route("/:id")
     })
     .put(function(req,res){
         var id=req.params.id;
-        db.Student.findByIdAndUpdate(id,req.body,(err,student)=>{
+        db.Student.findByIdAndUpdate(id,req.body,{new:true},(err,student)=>{
             if(err) res.status(500).send(err);
             res.send(student);
         })
